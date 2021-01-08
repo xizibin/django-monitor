@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'chart.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+    <div class="top">
+        <div class="top-trai">
+            <a href="{% url 'chart' %}"></a>
+                <img src="{% static 'logo1.png' %}" alt="logo-bachkhoa">
+            </a>
+        </div>
+        <div class="top-phai">
+            <a href="http://aao.hcmut.edu.vn">
+                <h2>Electronic Health Records Researchgate 
+                <p>Ho Chi Minh University of Technology</p>
+                </h2>
+            </a>
+        </div>
+    </div>
+    <div class="center">
+        {% block chart %}
+        {% endblock %}
+    </div>
+
+
+
+    <div class="bottom">
+            <h3>Monitor-Service Bach Khoa</h3>
+            <hr>
+        <div class="contact">
+            <div class="phone">
+                <i class="fa fa-mobile" aria-hidden="true"></i>
+                <h4>0983158679</h4>
+            </div>
+            <div class="mail">
+                <i class="fas fa-envelope    "></i>
+                <h4>nam.nguyen2307@hcmut.edu.vn</h4>
+            </div>
+        </div>
+        <div class="address">
+            <div class="address">
+                <i class="fas fa-map-marked-alt"></i>
+                <h4>268 Ly Thuong Kiet, Quan 10, Thanh pho Ho Chi Minh</h4>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        var upTime = document.getElementById('upTimeChart').getContext('2d');
+        var upTimeChart = new Chart(upTime, {
+        type: 'bar',
+        data: {
+        labels: ['Node up time'],
+        datasets: [{
+            label: 'Node Up Time',
+            backgroundColor: [
+                'rgba(127, 233, 78)'  
+            ],
+            borderColor: 'rgb(255, 255, 255)',
+            data: [' {{ time }}' ]
+        }]
+    },
+
+    options: {}
+});
+        var mem = document.getElementById('memChart').getContext('2d');
+        var memChart = new Chart(mem, {
+        type: 'pie',
+        data: {
+        labels: ['Mem_Free_GB', 'Mem_Used_GB'],
+        datasets: [{
+            label: 'Node Up Time',
+            backgroundColor: [
+                'rgba(127, 233, 78)',
+                'rgb(243, 80, 74)',  
+            ],
+            borderColor: 'rgb(255, 255, 255)',
+            data: [{{ mem }}, 8 - {{ mem }}  ]
+        }]
+    },
+
+    options: {}
+});
+    </script>
+</body>
+</html>

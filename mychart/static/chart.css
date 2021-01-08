@@ -1,0 +1,101 @@
+*{
+    padding: 0;
+    margin:0;
+    box-sizing: border-box;
+} 
+.top  {
+    display: flex;
+    width: 100%;
+    height: 150px;
+    background-image: linear-gradient(to right, #3092f4, #00a9f7, #00bae0, #00c5b7, #28cc88)
+}
+.top-phai a{
+    text-decoration: none;
+}
+.top-phai h2 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:black;
+    margin-left: 10px;
+    margin-top: 45px;
+    font-size: large;
+    transition: 0.3s;
+}
+.top-phai:hover h2 {
+    color:white;
+    margin-left: 10px;
+    margin-top: 35px;
+    font-size: large;
+}
+img {
+    width: 150px;
+    margin-top: 10px;
+    margin-left: 20px;
+    
+}
+
+
+.bottom {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: small;
+    background-color: rgb(151, 221, 194);
+    height: 170px;
+}
+.bottom hr {
+    margin-top: 30px;
+    color: black;
+}
+
+.bottom h3{
+    margin-left: 35px;
+    display: block;
+    height: 5px;
+    padding-top: 10px;
+}
+.bottom .contact {
+    display: flex;
+    margin-left: 35px;
+    height: 35px;
+    padding-top: 20px;
+}
+.phone {
+    display: flex;
+    width: 150px;
+    margin-left: 30px;
+}
+
+.phone h4 {
+    margin-left: 14px;
+}
+.mail   {
+    display: flex;
+}
+.mail h4 {
+    margin-left: 10px;
+}
+
+.address {
+    width: 700px;
+    display: flex;
+    margin-left: 30px;
+    padding-top: 20px;
+}
+.address h4 {
+    margin-left: 10px;
+}
+.img1 { 
+    transition: 1s;
+    width: 300px;
+    height: 200px;
+}
+.center {
+    height: 660px;
+    display:flex;
+}
+.center .memChart {
+    margin-left: 300px;
+    width: 500px;
+}
+.center .upTimeChart {
+    width: 700px;
+    height: 800px;
+}
