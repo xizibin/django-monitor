@@ -19,7 +19,7 @@
         </div>
         <div class="top-phai">
             <a href="http://aao.hcmut.edu.vn">
-                <h2>Electronic Health Records Researchgate 
+                <h2>Monitor Dashboard 
                 <p>Ho Chi Minh University of Technology</p>
                 </h2>
             </a>
@@ -67,7 +67,7 @@
                 'rgba(127, 233, 78)'  
             ],
             borderColor: 'rgb(255, 255, 255)',
-            data: [' {{ time }}' ]
+            data: [ {{ time }} ]
         }]
     },
 
@@ -86,6 +86,42 @@
             ],
             borderColor: 'rgb(255, 255, 255)',
             data: [{{ mem }}, 8 - {{ mem }}  ]
+        }]
+    },
+
+    options: {}
+});
+        var traffic = document.getElementById('TrafficChart').getContext('2d');
+        var trafficChart = new Chart(traffic, {
+        type: 'bar',
+        data: {
+        labels: ['Input traffic', 'Output traffic'],
+        datasets: [{
+            label: 'Traffic',
+            backgroundColor: [
+                'rgba(127, 233, 78)',
+                'rgb(243, 80, 74)',  
+            ],
+            borderColor: 'rgb(255, 255, 255)',
+            data: [{{ inTraffic }}, {{ outTraffic }}  ]
+        }]
+    },
+
+    options: {}
+});
+        var disk = document.getElementById('diskChart').getContext('2d');
+        var diskChart = new Chart(disk, {
+        type: 'pie',
+        data: {
+        labels: ['Free disk', 'used disk'],
+        datasets: [{
+            label: 'Disk Usage',
+            backgroundColor: [
+                'rgba(127, 233, 78)',
+                'rgb(243, 80, 74)',  
+            ],
+            borderColor: 'rgb(255, 255, 255)',
+            data: [{{ freedisk }}, {{ useddisk }}  ]
         }]
     },
 

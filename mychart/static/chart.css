@@ -87,15 +87,3 @@ img {
     width: 300px;
     height: 200px;
 }
-.center {
-    height: 660px;
-    display:flex;
-}
-.center .memChart {
-    margin-left: 300px;
-    width: 500px;
-}
-.center .upTimeChart {
-    width: 700px;
-    height: 800px;
-}

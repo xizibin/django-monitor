@@ -1,0 +1,36 @@
+groups:
+  - name: system_rule
+    rules:
+      - alert: Mem High Usage
+        expr: 100 - ((node_memory_MemAvailable_bytes{instance="localhost:9100",job="node_exporter"} * 100) / node_memory_MemTotal_bytes{instance="localhost:9100",job="node_exporter"}) > 70
+        for: 1m 
+        labels:
+          severity: warning
+        annotations:
+          summary: " Instance [{{ $labels.instance }}] has 30% or less Free memory"
+          description: "% Ram cua may tinh [{{ $labels.instance }}] dang su dung la [ {{$value}}] "
+      ### detec restart 
+
+      - alert: detect reboot
+        expr: (node_time_seconds{instance="localhost:9100",job="node_exporter"} - node_boot_time_seconds{instance="localhost:9100",job="node_exporter"}) < (10*60)
+        labels:
+          severity: warning
+        annotations:
+          summary: "Instance [{{ $labels.instance }}] has just rebooted "
+          description: "reboot"
+
+      - alert: Used Disk
+        expr: 100*(node_filesystem_avail_bytes{mountpoint="/etc/hosts"}/node_filesystem_size_bytes{mountpoint="/etc/hosts"}) < 20
+        labels:
+          severity: warning
+        annotations:
+          summary: " Instance [{{ $labels.instance }}] has 20% or less Free space"
+          description: " SSD cua may tinh [{{ $labels.instance }}] dang su dung la [ {{$value}}] "
+      - alert: CPU Usage
+        expr: ((((count(count(node_cpu_seconds_total{instance="localhost:9100",job="node_exporter"}) by (cpu))) - avg(sum by (mode)(irate(node_cpu_seconds_total{mode='idle',instance="localhost:9100",job="node_exporter"}[5m])))) * 100) / count(count(node_cpu_seconds_total{instance="localhost:9100",job="node_exporter"}) by (cpu))) > 70
+        labels:
+          severity: warning
+        annotations:
+          summary: " Instance [{{ $labels.instance }}] uses more than 70% CPU"
+          description: " %CPU cua may tinh [{{ $labels.instance }}] dang su dung la [ {{$value}}] "
+

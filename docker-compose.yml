@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-data:/prometheus
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./rules/test-rule.yaml:/etc/prometheus/rules/test-rule.yaml
+    network_mode: host
+  
+  node_exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - 9100:9100
+    network_mode: host
+  
+  alert_manager:
+    image: prom/alertmanager:latest
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    network_mode: host
+  
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    network_mode: host
+    volumes:
+        - ./grafana-data:/var/lib/grafana  
+    

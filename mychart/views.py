@@ -21,8 +21,35 @@ class AddPost(View):
         bootTimeJson = bootTime.json()
         bootTimeValue = float(bootTimeJson['data']['result'][0]['value'][1])
 
-        nodeTime = (upTimeValue-bootTimeValue) /60/60
-        return render(request,'mychart/chart.html',{'mem' : memValue,'time':nodeTime})
+        revTraffic = requests.get('http://localhost:9090/api/v1/query?query=node_network_receive_bytes_total{device=%22wlp2s0%22}') 
+        revTrafficJson = revTraffic.json()
+        revTrafficValue = float(revTrafficJson['data']['result'][0]['value'][1]) /1024/1024
+
+        transTraffic = requests.get('http://localhost:9090/api/v1/query?query=node_network_transmit_bytes_total{device="wlp2s0"}') 
+        transTrafficJson = transTraffic.json()
+        transTrafficValue = float(transTrafficJson['data']['result'][0]['value'][1]) /1024/1024
+        
+        freeDisk = requests.get('http://localhost:9090/api/v1/query?query=node_filesystem_avail_bytes{mountpoint="/etc/hosts"}') 
+        freeDiskJson = freeDisk.json()
+        freeDiskValue = float(freeDiskJson['data']['result'][0]['value'][1]) /1024/1024/1024
+
+        totaldisk = requests.get('http://localhost:9090/api/v1/query?query=node_filesystem_size_bytes{mountpoint="/etc/hosts"}') 
+        totaldiskJson = totaldisk.json()
+        totaldiskValue = float(totaldiskJson['data']['result'][0]['value'][1]) /1024/1024/1024
+
+        usedDisk = totaldiskValue - freeDiskValue
+        nodeTime = (upTimeValue - bootTimeValue) /60/60
+        context = {
+        'mem' : memValue,
+        'time':nodeTime,
+        'inTraffic': revTrafficValue,
+        'outTraffic': transTrafficValue,
+        'freedisk': freeDiskValue,
+        'useddisk': usedDisk
+        
+        }  
+
+        return render(request,'mychart/chart.html',context)
 
 def get_data(request):
     data = {

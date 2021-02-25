@@ -1,0 +1,17 @@
+global:
+  resolve_timeout: 10s
+route:
+  group_wait: 10s
+  group_interval: 10s
+  receiver: 'gmail'
+receivers:
+- name: 'gmail'
+  email_configs:
+  - to: 'nam.nguyen.tuan2307@gmail.com'
+    from: 'nam.nguyen.tuan2307@gmail.com'
+    smarthost: smtp.gmail.com:587
+    auth_username: 'nam.nguyen.tuan2307@gmail.com'
+    auth_identity: 'nam.nguyen.tuan2307@gmail.com'
+    auth_password: 'PASSWORDgmail2307'
+    
+  
