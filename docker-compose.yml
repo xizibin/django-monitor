@@ -11,8 +11,6 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    ports:
-      - 9090:9090
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
       - ./rules/test-rule.yaml:/etc/prometheus/rules/test-rule.yaml
@@ -20,14 +18,10 @@ services:
   
   node_exporter:
     image: prom/node-exporter:latest
-    ports:
-      - 9100:9100
     network_mode: host
   
   alert_manager:
     image: prom/alertmanager:latest
-    ports:
-      - 9093:9093
     volumes:
       - ./alertmanager.yaml:/etc/alertmanager/alertmanager.yml
     command:
@@ -36,8 +30,6 @@ services:
   
   grafana:
     image: grafana/grafana:latest
-    ports:
-      - 3000:3000
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
     network_mode: host

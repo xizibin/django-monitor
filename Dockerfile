@@ -6,9 +6,11 @@ EXPOSE 8000
 
 WORKDIR /doan
 
+COPY requirements.txt /doan
+RUN pip3 install -r requirements.txt && rm -rf /var/cache/apk/* 
+
 COPY . /doan
 
-RUN pip3 install -r requirements.txt && rm -rf /var/cache/apk/* 
 
 CMD [ "python3", "manage.py", "runserver" ]
 

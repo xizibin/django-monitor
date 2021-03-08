@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from datetime import datetime,timedelta
 
 # Create your views here.
 from django.http import JsonResponse, HttpResponse, HttpRequest, response, request
@@ -9,6 +10,16 @@ import decimal
 # Create your tests here.
 class AddPost(View):
     def get(self,request):
+        def gen():    
+            utc_now = (datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
+            utc_2 = (datetime.utcnow() - timedelta(minutes=2) ).strftime("%Y-%m-%dT%H:%M:%SZ")      
+            step = '15s'
+            memList = []
+            memQuery = requests.get(f'http://localhost:9090/api/v1/query_range?query=node_memory_MemAvailable_bytes&start={utc_2}&end={utc_now}&step={step}').json()
+            for x in range(9):
+                memList.append(round(int(memQuery['data']['result'][0]['values'][x][1])/1024/1024/1024,3)) 
+            return memList
+            
         mem = requests.get('http://localhost:9090/api/v1/query?query=node_memory_MemAvailable_bytes')
         memJson = mem.json()
         memValue = int(memJson['data']['result'][0]['value'][1]) /1024/1024/1024
@@ -39,14 +50,24 @@ class AddPost(View):
 
         usedDisk = totaldiskValue - freeDiskValue
         nodeTime = (upTimeValue - bootTimeValue) /60/60
+        memList = gen()
         context = {
         'mem' : memValue,
         'time':nodeTime,
         'inTraffic': revTrafficValue,
         'outTraffic': transTrafficValue,
         'freedisk': freeDiskValue,
-        'useddisk': usedDisk
-        
+        'useddisk': usedDisk,
+        'memList0' : memList[0],
+        'memList1' : memList[1],
+        'memList2' : memList[2],
+        'memList3' : memList[3],
+        'memList4' : memList[4],
+        'memList5' : memList[5],
+        'memList6' : memList[6],
+        'memList7' : memList[7],
+        'memList8' : memList[8],
+
         }  
 
         return render(request,'mychart/chart.html',context)

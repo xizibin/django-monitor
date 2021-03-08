@@ -26,6 +26,7 @@
         </div>
     </div>
     <div class="center">
+        <h2>{{memList}}</h2>
         {% block chart %}
         {% endblock %}
     </div>
@@ -73,6 +74,21 @@
 
     options: {}
 });
+var mem1 = document.getElementById('memChart1').getContext('2d');
+        var memChart = new Chart(mem1, {
+        type: 'line',
+        data: {
+        labels: ['a', 'b','c','d','e','f','g','h','i'],
+        datasets: [{
+            label: 'Memory ',
+            fill : false,
+            borderColor: 'rgb(127, 223, 78)',
+            data: [{{ memList0 }},{{ memList1 }},{{ memList2 }},{{ memList3 }},{{ memList4 }},{{ memList5 }},{{ memList6 }},{{ memList7 }},{{ memList8 }}  ]
+        }]
+    },
+
+    options: {}
+});
         var mem = document.getElementById('memChart').getContext('2d');
         var memChart = new Chart(mem, {
         type: 'pie',
@@ -105,10 +121,9 @@
             borderColor: 'rgb(255, 255, 255)',
             data: [{{ inTraffic }}, {{ outTraffic }}  ]
         }]
-    },
-
-    options: {}
-});
+        },  
+        options: {}
+        });
         var disk = document.getElementById('diskChart').getContext('2d');
         var diskChart = new Chart(disk, {
         type: 'pie',
