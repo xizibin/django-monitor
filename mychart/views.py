@@ -47,11 +47,13 @@ class AddPost(View):
         bootTimeValue = queryInstant('node_boot_time_seconds').getMetric()
         totaldiskValue = queryInstant('node_filesystem_size_bytes{mountpoint="/etc/hosts"}').getMetric()
         freeDiskValue = queryInstant('node_filesystem_avail_bytes{mountpoint="/etc/hosts"}').getMetric()
-        memList = queryRange('node_memory_MemAvailable_bytes',1,2).getMetric()
         revTrafficValue = queryInstant('node_network_receive_bytes_total{device=%22wlp2s0%22}').getMetric()
         transTrafficValue = queryInstant('node_network_transmit_bytes_total{device="wlp2s0"}').getMetric()
         usedDisk = totaldiskValue - freeDiskValue
         nodeTime = (upTimeValue - bootTimeValue) /60/60
+        mem = queryRange('node_memory_MemAvailable_bytes',10,60).getMetric()
+        memList = list(map(lambda a: (a/1024/1024/1024),mem))
+        memTime = queryRange('node_memory_MemAvailable_bytes',10,60).getTime()
         context = {
         'mem' : memValue,
         'time':nodeTime,
@@ -68,7 +70,16 @@ class AddPost(View):
         'memList6' : memList[6],
         'memList7' : memList[7],
         'memList8' : memList[8],
-
+        'memTime0' : memTime[0],
+        'memTime1' : memTime[1],
+        'memTime2' : memTime[2],
+        'memTime3' : memTime[3],
+        'memTime4' : memTime[4],
+        'memTime5' : memTime[5],
+        'memTime6' : memTime[6],
+        'memTime7' : memTime[7],
+        'memTime8' : memTime[8],
+        
         }  
 
         return render(request,'mychart/chart.html',context)

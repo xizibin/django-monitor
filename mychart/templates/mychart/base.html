@@ -78,12 +78,12 @@ var mem1 = document.getElementById('memChart1').getContext('2d');
         var memChart = new Chart(mem1, {
         type: 'line',
         data: {
-        labels: ['a', 'b','c','d','e','f','g','h','i'],
+        labels: ['{{ memTime0 }}','{{ memTime1 }}','{{ memTime2 }}','{{ memTime3 }}','{{ memTime4 }}','{{ memTime5 }}','{{ memTime6 }}','{{ memTime7 }}','{{ memTime8 }}'],
         datasets: [{
             label: 'Memory ',
             fill : false,
             borderColor: 'rgb(127, 223, 78)',
-            data: [{{ memList0 }},{{ memList1 }},{{ memList2 }},{{ memList3 }},{{ memList4 }},{{ memList5 }},{{ memList6 }},{{ memList7 }},{{ memList8 }}  ]
+            data: [{{ memList8 }},{{ memList7 }},{{ memList6 }},{{ memList5 }},{{ memList4 }},{{ memList3 }},{{ memList2 }},{{ memList1 }},{{ memList0 }}  ]
         }]
     },
 
