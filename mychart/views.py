@@ -8,49 +8,50 @@ import requests
 from django.views import View
 import decimal
 # Create your tests here.
+class queryRange():
+    def __init__(self,metric,timeRange,step):
+        self.timeRange = timeRange 
+        self.metric = metric
+        self.step = step
+    def getTime(self):
+        timeList = []
+        utc_now = (datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
+        utc_range = (datetime.utcnow() - timedelta(minutes=self.timeRange) ).strftime("%Y-%m-%dT%H:%M:%SZ")     
+        rangeList = round(int(self.timeRange)*60/int(self.step) + 1) 
+        metricQuery = requests.get(f'http://localhost:9090/api/v1/query_range?query={self.metric}&start={utc_range}&end={utc_now}&step={self.step}').json()
+        for x in range(rangeList):
+            timeList.append(datetime.fromtimestamp(metricQuery['data']['result'][0]['values'][x][0]).strftime("%H:%M:%S"))
+        return timeList
+    def getMetric(self):
+        metricList = []
+        utc_now = (datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
+        utc_range = (datetime.utcnow() - timedelta(minutes=self.timeRange) ).strftime("%Y-%m-%dT%H:%M:%SZ")     
+        rangeList = round(int(self.timeRange)*60/int(self.step) + 1) 
+        metricQuery = requests.get(f'http://localhost:9090/api/v1/query_range?query={self.metric}&start={utc_range}&end={utc_now}&step={self.step}').json()
+        for x in range(rangeList):
+            metricList.append(round(int(metricQuery['data']['result'][0]['values'][x][1]),3))   
+        return metricList
+
+class queryInstant():
+    def __init__(self,metric):
+        self.metric = metric
+    def getMetric(self):
+        metric = requests.get(f'http://localhost:9090/api/v1/query?query={self.metric}').json()
+        metricValue = round(float(metric['data']['result'][0]['value'][1]),3)
+        return metricValue
+
 class AddPost(View):
     def get(self,request):
-        def gen():    
-            utc_now = (datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
-            utc_2 = (datetime.utcnow() - timedelta(minutes=2) ).strftime("%Y-%m-%dT%H:%M:%SZ")      
-            step = '15s'
-            memList = []
-            memQuery = requests.get(f'http://localhost:9090/api/v1/query_range?query=node_memory_MemAvailable_bytes&start={utc_2}&end={utc_now}&step={step}').json()
-            for x in range(9):
-                memList.append(round(int(memQuery['data']['result'][0]['values'][x][1])/1024/1024/1024,3)) 
-            return memList
-            
-        mem = requests.get('http://localhost:9090/api/v1/query?query=node_memory_MemAvailable_bytes')
-        memJson = mem.json()
-        memValue = int(memJson['data']['result'][0]['value'][1]) /1024/1024/1024
-
-        upTime = requests.get('http://localhost:9090/api/v1/query?query=node_time_seconds')
-        upTimeJson = upTime.json()
-        upTimeValue = float(upTimeJson['data']['result'][0]['value'][1])
-        
-        bootTime = requests.get('http://localhost:9090/api/v1/query?query=node_boot_time_seconds')
-        bootTimeJson = bootTime.json()
-        bootTimeValue = float(bootTimeJson['data']['result'][0]['value'][1])
-
-        revTraffic = requests.get('http://localhost:9090/api/v1/query?query=node_network_receive_bytes_total{device=%22wlp2s0%22}') 
-        revTrafficJson = revTraffic.json()
-        revTrafficValue = float(revTrafficJson['data']['result'][0]['value'][1]) /1024/1024
-
-        transTraffic = requests.get('http://localhost:9090/api/v1/query?query=node_network_transmit_bytes_total{device="wlp2s0"}') 
-        transTrafficJson = transTraffic.json()
-        transTrafficValue = float(transTrafficJson['data']['result'][0]['value'][1]) /1024/1024
-        
-        freeDisk = requests.get('http://localhost:9090/api/v1/query?query=node_filesystem_avail_bytes{mountpoint="/etc/hosts"}') 
-        freeDiskJson = freeDisk.json()
-        freeDiskValue = float(freeDiskJson['data']['result'][0]['value'][1]) /1024/1024/1024
-
-        totaldisk = requests.get('http://localhost:9090/api/v1/query?query=node_filesystem_size_bytes{mountpoint="/etc/hosts"}') 
-        totaldiskJson = totaldisk.json()
-        totaldiskValue = float(totaldiskJson['data']['result'][0]['value'][1]) /1024/1024/1024
-
+        memValue = queryInstant('node_memory_MemAvailable_bytes').getMetric()
+        upTimeValue = queryInstant('node_time_seconds').getMetric()
+        bootTimeValue = queryInstant('node_boot_time_seconds').getMetric()
+        totaldiskValue = queryInstant('node_filesystem_size_bytes{mountpoint="/etc/hosts"}').getMetric()
+        freeDiskValue = queryInstant('node_filesystem_avail_bytes{mountpoint="/etc/hosts"}').getMetric()
+        memList = queryRange('node_memory_MemAvailable_bytes',1,2).getMetric()
+        revTrafficValue = queryInstant('node_network_receive_bytes_total{device=%22wlp2s0%22}').getMetric()
+        transTrafficValue = queryInstant('node_network_transmit_bytes_total{device="wlp2s0"}').getMetric()
         usedDisk = totaldiskValue - freeDiskValue
         nodeTime = (upTimeValue - bootTimeValue) /60/60
-        memList = gen()
         context = {
         'mem' : memValue,
         'time':nodeTime,
@@ -58,7 +59,7 @@ class AddPost(View):
         'outTraffic': transTrafficValue,
         'freedisk': freeDiskValue,
         'useddisk': usedDisk,
-        'memList0' : memList[0],
+        'memList0' : memList[0],    
         'memList1' : memList[1],
         'memList2' : memList[2],
         'memList3' : memList[3],
@@ -72,18 +73,7 @@ class AddPost(View):
 
         return render(request,'mychart/chart.html',context)
 
-def get_data(request):
-    data = {
-        "sale": 100,
-        "customers": 10,
-        "name": {
-            "nam": "male",
-            "duyen": "female",
-        }
-    }
-    printItem = data['name']['duyen']
-    # gender = printItem['nam']
-    return HttpResponse(printItem)
+
 
 
 
